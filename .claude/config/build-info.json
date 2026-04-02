@@ -1,0 +1,46 @@
+{
+  "project": "TASA Website",
+  "version": "1.0.0",
+  "description": "Twelve Apostles' Students Association Website",
+  "buildDate": "2026-04-02",
+  "nodeVersion": "20+",
+  "frameworkVersion": "Next.js 16.2.2",
+  "reactVersion": "19",
+  "typescriptVersion": "5+",
+  "environment": "development",
+  "buildTool": "next build",
+  "devServer": "next dev",
+  "status": "active",
+  "features": [
+    "Homepage",
+    "Responsive Design",
+    "Tailwind CSS",
+    "TypeScript",
+    "API Ready",
+    "SEO Optimized"
+  ],
+  "upcomingFeatures": [
+    "User Authentication",
+    "Events Management",
+    "Member Portal",
+    "Gallery",
+    "Blog",
+    "Donations",
+    "Newsletter"
+  ],
+  "maintainers": [
+    {
+      "name": "TASA Development Team",
+      "email": "dev@mytasa.org"
+    }
+  ],
+  "repositories": {
+    "github": "https://github.com/TASA/web"
+  },
+  "deployment": {
+    "platform": "Vercel",
+    "domain": "https://mytasa.org",
+    "ssl": true,
+    "cdn": "Vercel Edge Network"
+  }
+}
