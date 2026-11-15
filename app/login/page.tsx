@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,16 +18,36 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // TODO: connect to authentication backend
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setError('Authentication backend not yet connected. Coming soon!');
+    setError('');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? 'Login failed. Please try again.');
+        return;
+      }
+
+      // Redirect to profile or the page they came from
+      const params = new URLSearchParams(window.location.search);
+      router.push(params.get('redirect') ?? '/profile');
+      router.refresh();
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gray-50">
       <div className="w-full max-w-md">
-        {/* Logo / brand */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <div className="text-4xl font-bold text-blue-700">TASA</div>
@@ -45,9 +67,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 type="email"
                 name="email"
@@ -63,15 +83,9 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-sm font-medium text-gray-700">Password</label>
-                <button
-                  type="button"
-                  className="text-xs text-blue-700 hover:underline"
-                  onClick={() =>
-                    setError('Password reset functionality coming soon. Contact info@mytasa.org.')
-                  }
-                >
+                <Link href="/forgot-password" className="text-xs text-blue-700 hover:underline">
                   Forgot password?
-                </button>
+                </Link>
               </div>
               <input
                 type="password"

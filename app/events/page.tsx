@@ -147,6 +147,8 @@ export default function EventsPage() {
   const [rsvpName, setRsvpName] = useState('');
   const [rsvpEmail, setRsvpEmail] = useState('');
   const [rsvpDone, setRsvpDone] = useState(false);
+  const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [rsvpError, setRsvpError] = useState('');
 
   const filtered = events.filter((e) => {
     const tabMatch = activeTab === 'upcoming' ? e.upcoming : !e.upcoming;
@@ -154,10 +156,28 @@ export default function EventsPage() {
     return tabMatch && catMatch;
   });
 
-  function handleRsvp(e: React.FormEvent) {
+  async function handleRsvp(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: connect to backend
-    setRsvpDone(true);
+    if (!rsvpEvent) return;
+    setRsvpLoading(true);
+    setRsvpError('');
+    try {
+      const res = await fetch(`/api/events/${rsvpEvent.id}/rsvp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: rsvpName, email: rsvpEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRsvpError(data.error ?? 'RSVP failed. Please try again.');
+        return;
+      }
+      setRsvpDone(true);
+    } catch {
+      setRsvpError('Network error. Please try again.');
+    } finally {
+      setRsvpLoading(false);
+    }
   }
 
   return (
@@ -265,6 +285,7 @@ export default function EventsPage() {
                       setRsvpDone(false);
                       setRsvpName('');
                       setRsvpEmail('');
+                      setRsvpError('');
                     }}
                     className="w-full bg-yellow-500 text-gray-900 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-400 transition"
                   >
@@ -317,7 +338,12 @@ export default function EventsPage() {
             ) : (
               <>
                 <h2 className="text-xl font-bold text-gray-800 mb-1">RSVP</h2>
-                <p className="text-gray-500 text-sm mb-6">{rsvpEvent.title}</p>
+                <p className="text-gray-500 text-sm mb-4">{rsvpEvent.title}</p>
+                {rsvpError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-4">
+                    {rsvpError}
+                  </div>
+                )}
                 <form onSubmit={handleRsvp} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -351,9 +377,10 @@ export default function EventsPage() {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 bg-yellow-500 text-gray-900 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-400 transition"
+                      disabled={rsvpLoading}
+                      className="flex-1 bg-yellow-500 text-gray-900 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      Confirm RSVP
+                      {rsvpLoading ? 'Submitting…' : 'Confirm RSVP'}
                     </button>
                   </div>
                 </form>

@@ -8,6 +8,8 @@ This document tracks the planned features and development phases for the TASA we
 ## Phase 1: Core Features (In Progress)
 
 ### ✅ Completed
+
+#### Frontend
 - [x] Homepage with hero section
 - [x] Navigation menu (sticky, responsive with mobile hamburger)
 - [x] About/Who We Are section
@@ -18,46 +20,73 @@ This document tracks the planned features and development phases for the TASA we
 - [x] Why Join TASA section
 - [x] Weekly Activities schedule
 - [x] Organizational Structure
-- [x] Testimonials placeholder
+- [x] Testimonials placeholder (2 example quotes)
 - [x] Branches placeholder (province grid)
-- [x] Gallery placeholder
-- [x] Resources placeholder
-- [x] Blog placeholder
-- [x] Footer with social links (rich multi-column layout)
+- [x] Gallery placeholder (6 images)
+- [x] Resources placeholder (3 categories)
+- [x] Blog placeholder (3 article teasers)
+- [x] Footer with social links (multi-column layout)
 - [x] Responsive design (mobile, tablet, desktop)
-- [x] Shared Nav component extracted to layout (all pages)
-- [x] Shared Footer component extracted to layout (all pages)
+- [x] Shared Nav + Footer in root layout (`app/layout.tsx`)
 - [x] Newsletter signup form component
-- [x] `/events` — Events listing page with category filters, upcoming/past tabs, RSVP modal
-- [x] `/contact` — Contact form with department routing and FAQ section
-- [x] `/login` — Member login page (UI complete; backend pending)
-- [x] `/register` — Two-step member registration (UI complete; backend pending)
+- [x] `/events` — Events listing, upcoming/past tabs, category filters, RSVP modal → wired to API
+- [x] `/contact` — Contact form with department routing + FAQ → wired to API
+- [x] `/login` — Member login page → wired to `/api/auth/login`
+- [x] `/register` — Two-step registration → wired to `/api/auth/register`
+
+#### Backend
+- [x] Prisma 7 initialised with PostgreSQL provider (`prisma/schema.prisma`)
+- [x] Database schema: `User`, `Event`, `EventRSVP`, `NewsletterSubscriber`, `ContactMessage`
+- [x] `lib/db.ts` — Prisma client singleton (hot-reload safe)
+- [x] `lib/auth.ts` — JWT sign/verify, HttpOnly cookie helpers (uses `jose`)
+- [x] `lib/email.ts` — Nodemailer transporter + email templates (welcome, RSVP, contact, newsletter)
+- [x] `lib/api.ts` — Shared Route Handler response helpers
+- [x] `POST /api/auth/register` — register + set auth cookie
+- [x] `POST /api/auth/login` — authenticate + set auth cookie
+- [x] `POST /api/auth/logout` — clear auth cookie
+- [x] `GET  /api/auth/me` — return current user from JWT
+- [x] `GET  /api/events` — paginated event list with category/province/upcoming filters
+- [x] `POST /api/events` — admin-only event creation
+- [x] `GET  /api/events/[id]` — single event with RSVP count
+- [x] `POST /api/events/[id]/rsvp` — create RSVP, fire confirmation email
+- [x] `POST /api/contact` — save contact message, send acknowledgement + team notification
+- [x] `POST /api/newsletter` — subscribe (with re-subscribe support)
+- [x] `GET  /api/newsletter` — one-click unsubscribe via email link
+- [x] `middleware.ts` — JWT-based route protection for `/profile`, `/admin`; redirect authenticated users away from `/login`, `/register`
+- [x] `.env.local.example` — environment variable template with inline comments
 
 ### 🚀 Upcoming Phase 1 Features
 
-#### Authentication & User Management (Backend Required)
-- [ ] Authentication backend (JWT / session-based)
-- [ ] Email verification on registration
-- [ ] Password reset flow (forgot password → email link → reset)
-- [ ] User profile page (`/profile`)
-- [ ] Protected route middleware
+#### Database Setup (Required to Run Backend)
+- [ ] Provision a PostgreSQL database (Supabase / Railway / local Docker)
+- [ ] Copy `.env.local.example` → `.env.local` and fill in `DATABASE_URL`
+- [ ] Run `prisma migrate dev --name init` to apply schema
+- [ ] Run `prisma generate` to generate the Prisma client
 
-#### Events Module (Backend Required)
-- [ ] Events stored in database (PostgreSQL / MongoDB)
-- [ ] Admin: event creation & management dashboard
-- [ ] RSVP persisted to database + confirmation email
-- [ ] Event filtering by Province / Branch / Category / Date range
-- [ ] Full calendar view integration
-- [ ] Past events with gallery integration
+#### Authentication — Remaining
+- [ ] Email verification on registration (send token → verify route)
+- [ ] Password reset flow: `/forgot-password` page → `POST /api/auth/forgot-password` → email link → `/reset-password` page → `POST /api/auth/reset-password`
+- [ ] User profile page (`/profile`) — view & edit account details
+- [ ] Change password flow (from profile)
+- [ ] Session expiry handling (auto-logout + redirect)
+
+#### Events Module — Remaining
+- [ ] Load events from database (replace mock data in `/events`)
 - [ ] Individual event detail page (`/events/[id]`)
+- [ ] Admin: event creation UI (form at `/admin/events/new`)
+- [ ] Admin: event list & edit (`/admin/events`)
+- [ ] Past events with gallery integration
 
-#### Newsletter & Communication (Backend Required)
-- [ ] Newsletter signup connected to email service (SendGrid / Nodemailer)
-- [ ] Email subscription management (unsubscribe flow)
-- [ ] Newsletter template system
-- [ ] Automated event reminder emails
+#### Newsletter
+- [ ] Configure SMTP credentials in `.env.local`
+- [ ] Test welcome and confirmation emails end-to-end
+- [ ] Unsubscribe link validation
 
-#### Donations & Resource Mobilisation (Backend Required)
+#### Contact
+- [ ] Configure `CONTACT_NOTIFICATION_EMAIL` in `.env.local`
+- [ ] Test contact form email routing
+
+#### Donations & Resource Mobilisation (Backend)
 - [ ] Donation form integration
 - [ ] Payment gateway (Stripe / PayPal)
 - [ ] Donation tracking dashboard
@@ -78,28 +107,19 @@ This document tracks the planned features and development phases for the TASA we
 ### Branches Directory
 - [ ] National branch listing (replace placeholder grid)
 - [ ] Provincial branch listings
-- [ ] Individual branch portals
-- [ ] Branch profiles with:
+- [ ] Individual branch portals with:
   - [ ] Contact information
   - [ ] Location/maps integration
   - [ ] Leadership team
   - [ ] Meeting schedules
   - [ ] Local events
-- [ ] Branch-specific directories
 
 ### Gallery
 - [ ] Photo gallery upload (admin)
 - [ ] Album organisation (replace placeholder)
-- [ ] Categories:
-  - [ ] Church services
-  - [ ] Conferences
-  - [ ] Outreach events
-  - [ ] Sports activities
-  - [ ] Social events
-  - [ ] Leadership training
+- [ ] Categories: Church services, Conferences, Outreach, Sports, Social, Leadership training
 - [ ] Video integration (YouTube embeds)
 - [ ] Image lightbox/viewer
-- [ ] Download options for members
 
 ---
 
@@ -107,91 +127,62 @@ This document tracks the planned features and development phases for the TASA we
 
 ### Resources Library
 - [ ] Devotionals & daily reflections (replace placeholder)
-- [ ] Bible study guides
-- [ ] Academic support materials
-- [ ] Health awareness resources
-- [ ] Financial literacy modules
-- [ ] Leadership development guides
-- [ ] Member handbook
-- [ ] Resource categories & search
-- [ ] PDF downloads
-- [ ] Print-friendly versions
+- [ ] Bible study guides, academic support, health awareness, financial literacy modules
+- [ ] Resource categories & search, PDF downloads
 
 ### Blog & Articles
-- [ ] Blog platform with:
-  - [ ] Article creation & editing
-  - [ ] Categories (replace placeholder):
-    - [ ] Faith & spirituality
-    - [ ] Academic excellence
-    - [ ] Leadership development
-    - [ ] Identity & cultural issues
-    - [ ] Student life
-  - [ ] Search functionality
-  - [ ] Archive by date
-- [ ] Author profiles
-- [ ] Comments & engagement
-- [ ] Social sharing buttons
-- [ ] Featured articles section
+- [ ] Blog platform (replace placeholder)
+- [ ] Categories: Faith, Academics, Leadership, Identity, Student life
+- [ ] Author profiles, comments, social sharing
 
 ---
 
 ## Phase 4: Engagement & Support
 
 ### Contact & Support
-- [x] Contact form with department routing (UI complete)
-- [x] FAQ section (initial set complete)
-- [ ] Contact backend — route submissions to email / ticketing system
-- [ ] Contact directory expanded by department
+- [x] Contact form with department routing (UI + API)
+- [x] FAQ section
+- [ ] Full ticketing system
 - [ ] Chatbot for common questions
-- [ ] Full ticketing system for inquiries
 
 ### Additional Features
-- [ ] Member directory (private, logged-in only)
+- [ ] Member directory (private, authenticated only)
 - [ ] Discussion forums
 - [ ] Mentorship matching
 - [ ] Job board for student opportunities
-- [ ] Academic partnership information
-- [ ] Partner organisation listings
 
 ---
 
 ## Technical Requirements
 
-### Backend (To Be Implemented)
-- [ ] Database setup (PostgreSQL / MongoDB)
-- [ ] API endpoints for all features
-- [ ] Authentication system (JWT / session)
+### Backend (Status)
+- [x] Prisma 7 ORM + PostgreSQL schema
+- [x] JWT authentication (`jose`)
+- [x] Email service (`nodemailer`) — configured, SMTP creds needed
+- [x] Route Handlers for all Phase 1 features
+- [x] Middleware for auth-protected routes
+- [ ] Database provisioned and migrated
 - [ ] Image upload & storage (Cloudinary / AWS S3)
-- [ ] Email service (SendGrid / Nodemailer)
 - [ ] Payment processing (Stripe / PayPal)
 - [ ] Admin dashboard
 
-### Frontend (Current Status)
-- [x] `/` — Homepage (all sections)
-- [x] `/events` — Events listing with filters and RSVP
-- [x] `/contact` — Contact form
-- [x] `/login` — Login page
-- [x] `/register` — Two-step registration
+### Frontend (Status)
+- [x] `/` — Full homepage
+- [x] `/events` — Listing with filters and RSVP (API-wired)
+- [x] `/contact` — Contact form (API-wired)
+- [x] `/login` — Login (API-wired)
+- [x] `/register` — Two-step registration (API-wired)
 - [ ] `/events/[id]` — Event detail page
-- [ ] `/testimonials` — Testimonials display
-- [ ] `/branches` — Branch directory
-- [ ] `/gallery` — Photo/video gallery
-- [ ] `/resources` — Resources library
-- [ ] `/blog` — Blog listing
-- [ ] `/blog/[slug]` — Article detail
 - [ ] `/profile` — User dashboard
-- [x] Shared Nav and Footer in root layout
-- [x] Newsletter signup component
-- [ ] Component library for common UI
-- [x] Form validation (client-side, steps 1 & 2 of registration)
-- [ ] Server-side form validation
-- [ ] Error handling & user feedback (toast/notification system)
+- [ ] `/admin` — Admin dashboard
+- [ ] `/forgot-password` — Password reset request
+- [ ] `/reset-password` — Password reset form
+- [ ] `/testimonials`, `/branches`, `/gallery`, `/resources`, `/blog`
 
 ### DevOps & Deployment
-- [ ] Environment configuration (`.env.local` + `.env.production`)
+- [ ] Environment configuration (`.env.local` populated)
+- [ ] Prisma migrations applied to production DB
 - [ ] CI/CD pipeline setup
-- [ ] Database migrations
-- [ ] Backup & disaster recovery
 - [ ] Performance monitoring
 - [ ] SEO optimisation (meta tags, OG images per page)
 - [ ] Analytics integration
@@ -200,23 +191,27 @@ This document tracks the planned features and development phases for the TASA we
 
 ## Priority Matrix
 
-### High Priority (Next)
-1. Backend: Authentication system (JWT + email verification)
-2. Backend: Database + Events API
-3. Backend: Contact form email routing
-4. Backend: Newsletter subscription (SendGrid)
+### Immediate (Database + Config)
+1. Provision PostgreSQL (Supabase recommended for quick start)
+2. Fill `.env.local` from `.env.local.example`
+3. Run `prisma migrate dev --name init` + `prisma generate`
+4. Configure SMTP for emails
 
-### Medium Priority (Following)
-1. `/events/[id]` — Event detail page
-2. Testimonials section (real content + carousel)
-3. Branches directory (full data)
-4. Gallery module (albums)
+### High Priority (Next Sprint)
+1. Email verification on registration
+2. Password reset flow
+3. `/profile` page
+4. Load real events from DB (replace mock data)
 
-### Low Priority (Later)
+### Medium Priority
+1. `/events/[id]` detail page
+2. Testimonials, branches, gallery (real content)
+3. Admin dashboard (events CRUD)
+
+### Low Priority
 1. Blog platform
 2. Resources library
-3. Discussion forums
-4. Advanced features (mentorship, job board)
+3. Discussion forums, mentorship, job board
 
 ---
 
@@ -231,23 +226,35 @@ This document tracks the planned features and development phases for the TASA we
 
 ---
 
-## Setup Instructions (For Developers)
+## Developer Setup
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start dev server: `npm run dev`
-4. Create backend API (separate project or Next.js Route Handlers)
-5. Configure environment variables (`.env.local`)
-6. Set up database
-7. Deploy to Vercel or your hosting provider
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Copy and fill environment variables
+cp .env.local.example .env.local
+# Edit .env.local with your DATABASE_URL, JWT_SECRET, and SMTP credentials
+
+# 3. Generate Prisma client (needed before first run)
+npx prisma generate
+
+# 4. Apply database schema
+npx prisma migrate dev --name init
+
+# 5. Start dev server
+npm run dev
+```
+
+> **Note on npm on Windows:** If `npx` is not in your PATH, use the full path:
+> `"C:\Program Files\nodejs\npx.cmd" prisma generate`
 
 ---
 
 ## Notes
 
-- All dates are estimates and subject to change based on resource availability
-- Community feedback from members may reprioritise features
-- Security and data privacy are paramount for all features
+- All dates are estimates and subject to change
+- Security and data privacy are paramount — passwords hashed with bcrypt (12 rounds), JWTs stored in HttpOnly cookies
 - Mobile responsiveness required for all pages
 - Accessibility (WCAG 2.1) must be maintained
 
@@ -255,4 +262,4 @@ This document tracks the planned features and development phases for the TASA we
 
 **Last Updated:** April 6, 2026
 **Next Review Date:** May 4, 2026
-**Status:** Active Development — Phase 1 frontend scaffold complete; backend implementation next
+**Status:** Active Development — Phase 1 backend scaffold complete; database provisioning and email config next

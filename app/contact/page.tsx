@@ -28,10 +28,24 @@ export default function ContactPage() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: connect to backend / email service
-    setStatus('success');
+    setStatus('idle'); // reset any prior error
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error ?? 'Failed to send message. Please try again.');
+        return;
+      }
+      setStatus('success');
+    } catch {
+      alert('Network error. Please check your connection and try again.');
+    }
   }
 
   return (

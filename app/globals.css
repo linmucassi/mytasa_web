@@ -1,26 +1,153 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ──────────────────────────────────────────────────────────────
+   TASA design tokens
+   Royal blue (TACC / conference shirts) · Gold · Ink · Paper
+   The blue / yellow / gray scales are remapped to the brand so
+   every existing utility (bg-blue-700, text-yellow-500 …) is on-brand.
+   ────────────────────────────────────────────────────────────── */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  --color-ink: #0a0e24;
+  --color-ink-soft: #141a3a;
+  --color-paper: #f6f4ef;
+  --color-royal: #2a37c2;
+  --color-gold: #f2b705;
+  --color-cross: #d7263d;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-blue-50: #eef0fd;
+  --color-blue-100: #dde1fb;
+  --color-blue-200: #bcc4f7;
+  --color-blue-300: #8f9bf0;
+  --color-blue-400: #6170e6;
+  --color-blue-500: #3f50dd;
+  --color-blue-600: #3242d6;
+  --color-blue-700: #2a37c2;
+  --color-blue-800: #232d9c;
+  --color-blue-900: #1d2677;
+  --color-blue-950: #12174a;
+
+  --color-yellow-50: #fffaeb;
+  --color-yellow-100: #fff4cc;
+  --color-yellow-200: #ffe999;
+  --color-yellow-300: #ffd95c;
+  --color-yellow-400: #ffc926;
+  --color-yellow-500: #f2b705;
+  --color-yellow-600: #c99500;
+  --color-yellow-700: #9a7200;
+
+  --color-gray-50: #f7f6f2;
+  --color-gray-100: #efede7;
+  --color-gray-200: #e2dfd7;
+  --color-gray-300: #cfcbc1;
+  --color-gray-400: #a39f95;
+  --color-gray-500: #77736a;
+  --color-gray-600: #5a574f;
+  --color-gray-700: #3f3d37;
+  --color-gray-800: #26251f;
+  --color-gray-900: #16150f;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
 }
 
+:root {
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-paper);
+}
+
 body {
-  background: #ffffff !important;
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* Big editorial headline */
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+/* "/ 01" section markers */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Outlined text (hero third line) */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px currentColor;
+}
+
+/* Subtle film grain over dark panels */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Scroll reveal (driven by components/Reveal) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Form fields — shared look across contact / auth / RSVP */
+.field {
+  width: 100%;
+  border-radius: 0.875rem;
+  border: 1px solid var(--color-gray-200);
+  background: #fff;
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--color-royal);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-royal) 15%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .animate-marquee, .animate-float { animation: none; }
+  html { scroll-behavior: auto; }
 }

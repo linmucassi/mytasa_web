@@ -6,12 +6,23 @@ export default function NewsletterSignup() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'success'>('idle');
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    // TODO: connect to email backend (SendGrid / Nodemailer)
-    setStatus('success');
-    setEmail('');
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      // 201 = new subscriber, 409 = already subscribed (still show success)
+      if (res.ok || res.status === 409) {
+        setStatus('success');
+        setEmail('');
+      }
+    } catch {
+      // Silent fail — newsletter is non-critical
+    }
   }
 
   return (
