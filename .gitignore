@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# Original full-size photos (~2.6 GB) — keep out of git; host them externally.
+# The site uses the optimised copies in public/assets/gallery/web.
+/public/assets/gallery/people/

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AuthShell from '../components/AuthShell';
+import { photos } from '@/lib/gallery';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,80 +48,76 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gray-50">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <div className="text-4xl font-bold text-blue-700">TASA</div>
-            <div className="text-sm text-gray-500 mt-1">Evolution Through Christ</div>
-          </Link>
+    <AuthShell
+      photo={photos.whiteSinging}
+      quote={<>Welcome <span className="text-gold">home.</span></>}
+      caption="Member login · Evolution through Christ"
+    >
+      <p className="eyebrow text-royal mb-3">/ Member login</p>
+      <h1 className="display text-5xl mb-2">Sign in.</h1>
+      <p className="text-gray-500 mb-8">Good to see you again.</p>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-5">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+          <input
+            id="login-email"
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            required
+            autoComplete="email"
+            className="field"
+            placeholder="your@email.com"
+          />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">Member Login</h1>
-          <p className="text-gray-500 text-sm mb-6">Sign in to your TASA account.</p>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-5">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                autoComplete="email"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                placeholder="your@email.com"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">Password</label>
-                <Link href="/forgot-password" className="text-xs text-blue-700 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-                autoComplete="current-password"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-700 text-white py-3 rounded-full font-bold hover:bg-blue-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Signing in…' : 'Sign In'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-gray-500">
-            Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-blue-700 font-semibold hover:underline">
-              Register here
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700">Password</label>
+            <Link href="/forgot-password" className="text-xs text-royal font-medium hover:underline">
+              Forgot password?
             </Link>
           </div>
+          <input
+            id="login-password"
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            autoComplete="current-password"
+            className="field"
+            placeholder="••••••••"
+          />
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          By signing in you agree to TASA&apos;s terms and privacy policy.
-        </p>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-ink text-white py-3.5 rounded-full font-bold hover:bg-royal transition disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Signing in…' : 'Sign in'}
+        </button>
+      </form>
+
+      <div className="mt-8 text-sm text-gray-500">
+        Don&apos;t have an account?{' '}
+        <Link href="/register" className="text-royal font-semibold hover:underline">
+          Join TASA
+        </Link>
       </div>
-    </div>
+
+      <p className="text-xs text-gray-400 mt-10">
+        By signing in you agree to TASA&apos;s terms and privacy policy.
+      </p>
+    </AuthShell>
   );
 }

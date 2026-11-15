@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AuthShell from '../components/AuthShell';
+import { photos } from '@/lib/gallery';
 
 const provinces = [
   'Western Cape', 'Gauteng', 'KwaZulu-Natal', 'Eastern Cape',
@@ -96,107 +98,103 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gray-50">
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <div className="text-4xl font-bold text-blue-700">TASA</div>
-            <div className="text-sm text-gray-500 mt-1">Evolution Through Christ</div>
-          </Link>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+    <AuthShell
+      photo={photos.anniversary}
+      quote={<>Find your <span className="text-gold">people.</span></>}
+      caption="Join a family of students across 9 provinces"
+    >
+          <p className="eyebrow text-royal mb-3">/ Join TASA</p>
           {/* Step indicator */}
           <div className="flex items-center gap-3 mb-8">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${step >= 1 ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
-            <div className="flex-1 h-1 rounded-full bg-gray-200">
-              <div className={`h-1 rounded-full bg-blue-700 transition-all ${step === 2 ? 'w-full' : 'w-0'}`} />
+            <div className={`grid place-items-center w-9 h-9 rounded-full text-sm font-bold transition ${step >= 1 ? 'bg-ink text-white' : 'bg-gray-100 text-gray-500'}`}>1</div>
+            <div className="flex-1 h-1 rounded-full bg-gray-100 overflow-hidden">
+              <div className={`h-1 rounded-full bg-gold transition-all duration-500 ${step === 2 ? 'w-full' : 'w-0'}`} />
             </div>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${step === 2 ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
+            <div className={`grid place-items-center w-9 h-9 rounded-full text-sm font-bold transition ${step === 2 ? 'bg-ink text-white' : 'bg-gray-100 text-gray-500'}`}>2</div>
           </div>
 
           {apiError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-5">
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-5">
               {apiError}
             </div>
           )}
 
           {step === 1 && (
             <>
-              <h1 className="text-2xl font-bold text-gray-800 mb-1">Create Your Account</h1>
+              <h1 className="display text-4xl md:text-5xl mb-2">Create your account.</h1>
               <p className="text-gray-500 text-sm mb-6">Step 1 of 2 — Personal details</p>
               <form onSubmit={handleNextStep} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name <span className="text-red-500">*</span></label>
-                    <input type="text" name="firstName" value={form.firstName} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="First name" />
-                    {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">First Name <span className="text-cross">*</span></label>
+                    <input type="text" name="firstName" value={form.firstName} onChange={handleChange} className="field" placeholder="First name" />
+                    {errors.firstName && <p className="text-cross text-xs mt-1">{errors.firstName}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name <span className="text-red-500">*</span></label>
-                    <input type="text" name="lastName" value={form.lastName} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Last name" />
-                    {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Last Name <span className="text-cross">*</span></label>
+                    <input type="text" name="lastName" value={form.lastName} onChange={handleChange} className="field" placeholder="Last name" />
+                    {errors.lastName && <p className="text-cross text-xs mt-1">{errors.lastName}</p>}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" name="email" value={form.email} onChange={handleChange} autoComplete="email" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="your@email.com" />
-                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address <span className="text-cross">*</span></label>
+                  <input type="email" name="email" value={form.email} onChange={handleChange} autoComplete="email" className="field" placeholder="your@email.com" />
+                  {errors.email && <p className="text-cross text-xs mt-1">{errors.email}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                  <input type="tel" name="phone" value={form.phone} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="+27 81 234 5678" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+                  <input type="tel" name="phone" value={form.phone} onChange={handleChange} className="field" placeholder="+27 81 234 5678" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password <span className="text-red-500">*</span></label>
-                  <input type="password" name="password" value={form.password} onChange={handleChange} autoComplete="new-password" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="At least 8 characters" />
-                  {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Password <span className="text-cross">*</span></label>
+                  <input type="password" name="password" value={form.password} onChange={handleChange} autoComplete="new-password" className="field" placeholder="At least 8 characters" />
+                  {errors.password && <p className="text-cross text-xs mt-1">{errors.password}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password <span className="text-red-500">*</span></label>
-                  <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} autoComplete="new-password" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Repeat your password" />
-                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password <span className="text-cross">*</span></label>
+                  <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} autoComplete="new-password" className="field" placeholder="Repeat your password" />
+                  {errors.confirmPassword && <p className="text-cross text-xs mt-1">{errors.confirmPassword}</p>}
                 </div>
-                <button type="submit" className="w-full bg-blue-700 text-white py-3 rounded-full font-bold hover:bg-blue-800 transition">Continue →</button>
+                <button type="submit" className="w-full bg-ink text-white py-3.5 rounded-full font-bold hover:bg-royal transition">Continue →</button>
               </form>
             </>
           )}
 
           {step === 2 && (
             <>
-              <h1 className="text-2xl font-bold text-gray-800 mb-1">Almost There!</h1>
+              <h1 className="display text-4xl md:text-5xl mb-2">Almost there.</h1>
               <p className="text-gray-500 text-sm mb-6">Step 2 of 2 — Your TASA details</p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Institution / University <span className="text-red-500">*</span></label>
-                  <input type="text" name="institution" value={form.institution} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="e.g. University of Cape Town" />
-                  {errors.institution && <p className="text-red-500 text-xs mt-1">{errors.institution}</p>}
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">School / Institution <span className="text-cross">*</span></label>
+                  <input type="text" name="institution" value={form.institution} onChange={handleChange} className="field" placeholder="e.g. University of Cape Town or your high school" />
+                  {errors.institution && <p className="text-cross text-xs mt-1">{errors.institution}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Province <span className="text-red-500">*</span></label>
-                  <select name="province" value={form.province} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Province <span className="text-cross">*</span></label>
+                  <select name="province" value={form.province} onChange={handleChange} className="field">
                     <option value="">Select your province</option>
                     {provinces.map((p) => <option key={p} value={p}>{p}</option>)}
                   </select>
-                  {errors.province && <p className="text-red-500 text-xs mt-1">{errors.province}</p>}
+                  {errors.province && <p className="text-cross text-xs mt-1">{errors.province}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Year of Study</label>
-                  <select name="yearOfStudy" value={form.yearOfStudy} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Year of Study</label>
+                  <select name="yearOfStudy" value={form.yearOfStudy} onChange={handleChange} className="field">
                     <option value="">Select year (optional)</option>
-                    {['1st Year', '2nd Year', '3rd Year', '4th Year', 'Postgraduate', 'Alumni'].map((y) => <option key={y} value={y}>{y}</option>)}
+                    {['High School learner', '1st Year', '2nd Year', '3rd Year', '4th Year', 'Postgraduate', 'Alumni'].map((y) => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
                 <div className="flex items-start gap-3 pt-1">
                   <input type="checkbox" name="agreeTerms" id="agreeTerms" checked={form.agreeTerms} onChange={handleChange} className="mt-0.5 w-4 h-4 accent-blue-700" />
                   <label htmlFor="agreeTerms" className="text-sm text-gray-600">
-                    I agree to TASA&apos;s terms of membership and privacy policy. I confirm that I am a student or recent graduate.
+                    I agree to TASA&apos;s terms of membership and privacy policy. I confirm that I am a student (high school or tertiary) or recent graduate.
                   </label>
                 </div>
-                {errors.agreeTerms && <p className="text-red-500 text-xs">{errors.agreeTerms}</p>}
+                {errors.agreeTerms && <p className="text-cross text-xs">{errors.agreeTerms}</p>}
                 <div className="flex gap-3 pt-2">
-                  <button type="button" onClick={() => setStep(1)} className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-full font-semibold text-sm hover:bg-gray-50 transition">← Back</button>
-                  <button type="submit" disabled={submitting} className="flex-1 bg-yellow-500 text-gray-900 py-3 rounded-full font-bold hover:bg-yellow-400 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                  <button type="button" onClick={() => setStep(1)} className="flex-1 ring-1 ring-ink/15 text-gray-700 py-3 rounded-full font-semibold text-sm hover:bg-paper transition">← Back</button>
+                  <button type="submit" disabled={submitting} className="flex-1 bg-gold text-ink py-3 rounded-full font-bold hover:bg-ink hover:text-white transition disabled:opacity-60 disabled:cursor-not-allowed">
                     {submitting ? 'Creating account…' : 'Join TASA'}
                   </button>
                 </div>
@@ -204,12 +202,10 @@ export default function RegisterPage() {
             </>
           )}
 
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-8 text-sm text-gray-500">
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-700 font-semibold hover:underline">Sign in</Link>
+            <Link href="/login" className="text-royal font-semibold hover:underline">Sign in</Link>
           </div>
-        </div>
-      </div>
-    </div>
+    </AuthShell>
   );
 }
