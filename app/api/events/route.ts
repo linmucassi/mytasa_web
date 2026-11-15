@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const events = await db.event.findMany({
       where: {
         published: true,
-        ...(category ? { category: category as import('@/app/generated/prisma').EventCategory } : {}),
+        ...(category ? { category: category as import('@/app/generated/prisma/client').EventCategory } : {}),
         ...(province ? { province } : {}),
         ...(upcoming === 'true'
           ? { date: { gte: now } }

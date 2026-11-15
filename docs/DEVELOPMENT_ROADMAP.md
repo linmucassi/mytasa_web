@@ -12,6 +12,8 @@ Everything still open after the UI revamp, grouped by workstream. Items marked �
 ### 1. Sign-in & backend for logged-in activity 🔴
 The UI and API routes exist, but nothing runs end-to-end yet.
 - [ ] 🔴 Provision PostgreSQL (Supabase recommended), fill `.env.local`, run `prisma migrate dev` + `prisma generate` — until then every API route fails (`@/app/generated/prisma` is missing)
+- [x] Netlify build fixed: `prisma generate` runs before `next build` (and on `postinstall`); Prisma 7 client imported from `app/generated/prisma/client` with the `@prisma/adapter-pg` driver adapter (`lib/db.ts`)
+- [ ] 🔴 Set Netlify environment variables before the database goes live: `DATABASE_URL`, **`JWT_SECRET`** (`lib/auth.ts` falls back to a hard-coded secret if unset — tokens would be forgeable), `SMTP_*`, `EMAIL_FROM`, `CONTACT_NOTIFICATION_EMAIL`; then make `lib/auth.ts` refuse to run in production without `JWT_SECRET`
 - [ ] 🔴 Build `/profile` — login and register already redirect there after success, so users currently land on a **404**
 - [ ] 🔴 Build `/forgot-password` + `/reset-password` (+ `POST /api/auth/forgot-password`, `POST /api/auth/reset-password`) — the "Forgot password?" link on `/login` currently **404s**
 - [ ] Email verification on registration (token → verify route → `emailVerified`)
@@ -37,7 +39,8 @@ Current state: form saves to `ContactMessage` and fires two emails (acknowledgem
 
 ### 3. Image hosting — get photos out of the codebase 🔴
 `public/assets/gallery/people` holds **~770 MB of originals** (210 photos) and `public/assets/gallery/web` ~35 MB of WebP copies. Anything in `public/` is deployed with the site and bloats the git repo.
-- [ ] 🔴 Do **not** commit `public/assets/gallery/people` — add it to `.gitignore` now
+- [x] `public/assets/gallery/people` added to `.gitignore` and untracked (commit `2a41b39`) — originals stay on disk only
+- [ ] 46 originals (~1 GB) pushed before that still live in git **history**; purge with `git filter-repo` + force-push if repo size becomes a problem (coordinate with anyone else who has cloned)
 - [ ] Choose a host: Cloudinary / Supabase Storage / Vercel Blob / S3 + CDN
 - [ ] Upload originals there; serve resized versions via the host's transforms (or `next/image` with `images.remotePatterns` in `next.config.ts`)
 - [ ] Replace `lib/gallery-manifest.json` + `scripts/optimize-images.mjs` with an albums table (`Gallery`) in the database
